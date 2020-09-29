@@ -28,6 +28,7 @@ type WorkerPoolRequest struct {
 // swagger:model
 type WorkerPoolPatchRequest struct {
 	Size            int    `json:"sizePerZone"`
+	Labels          map[string]string `json:"labels"`
 	ReasonForResize string `json:"reasonForResize"`
 	State           string `json:"state"`
 }
@@ -82,6 +83,7 @@ type WorkerPoolZoneResponses []WorkerPoolZoneResponse
 type WorkerPool interface {
 	CreateWorkerPool(clusterNameOrID string, workerPoolReq WorkerPoolRequest, target ClusterTargetHeader) (WorkerPoolResponse, error)
 	ResizeWorkerPool(clusterNameOrID, workerPoolNameOrID string, size int, target ClusterTargetHeader) error
+	UpdateLabelsWorkerPool(clusterNameOrID, workerPoolNameOrID string, labels map[string]string, target ClusterTargetHeader) error
 	PatchWorkerPool(clusterNameOrID, workerPoolNameOrID, state string, target ClusterTargetHeader) error
 	DeleteWorkerPool(clusterNameOrID string, workerPoolNameOrID string, target ClusterTargetHeader) error
 	ListWorkerPools(clusterNameOrID string, target ClusterTargetHeader) ([]WorkerPoolResponse, error)
@@ -117,11 +119,22 @@ func (w *workerpool) PatchWorkerPool(clusterNameOrID, workerPoolNameOrID, state 
 	return err
 }
 
+
 // ResizeWorkerPool calls the API to resize a worker
 func (w *workerpool) ResizeWorkerPool(clusterNameOrID, workerPoolNameOrID string, size int, target ClusterTargetHeader) error {
 	requestBody := WorkerPoolPatchRequest{
 		State: "resizing",
 		Size:  size,
+	}
+	_, err := w.client.Patch(fmt.Sprintf("/v1/clusters/%s/workerpools/%s", clusterNameOrID, workerPoolNameOrID), requestBody, nil, target.ToMap())
+	return err
+}
+
+// UpdateLabelsWorkerPool calls the API to resize a worker with the labels option
+func (w *workerpool) UpdateLabelsWorkerPool(clusterNameOrID, workerPoolNameOrID, labels map[string]string, target ClusterTargetHeader) error {
+	requestBody := WorkerPoolPatchRequest{
+		State: "labels",
+		Labels: labels,
 	}
 	_, err := w.client.Patch(fmt.Sprintf("/v1/clusters/%s/workerpools/%s", clusterNameOrID, workerPoolNameOrID), requestBody, nil, target.ToMap())
 	return err
