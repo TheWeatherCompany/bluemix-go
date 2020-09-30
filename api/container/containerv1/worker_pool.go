@@ -27,10 +27,10 @@ type WorkerPoolRequest struct {
 // WorkerPoolPatchRequest provides attributes to patch update worker pool
 // swagger:model
 type WorkerPoolPatchRequest struct {
-	Size            int    `json:"sizePerZone"`
+	Size            int               `json:"sizePerZone"`
 	Labels          map[string]string `json:"labels"`
-	ReasonForResize string `json:"reasonForResize"`
-	State           string `json:"state"`
+	ReasonForResize string            `json:"reasonForResize"`
+	State           string            `json:"state"`
 }
 
 // WorkerPoolResponse provides worker pool data
@@ -119,7 +119,6 @@ func (w *workerpool) PatchWorkerPool(clusterNameOrID, workerPoolNameOrID, state 
 	return err
 }
 
-
 // ResizeWorkerPool calls the API to resize a worker
 func (w *workerpool) ResizeWorkerPool(clusterNameOrID, workerPoolNameOrID string, size int, target ClusterTargetHeader) error {
 	requestBody := WorkerPoolPatchRequest{
@@ -133,7 +132,7 @@ func (w *workerpool) ResizeWorkerPool(clusterNameOrID, workerPoolNameOrID string
 // UpdateLabelsWorkerPool calls the API to resize a worker with the labels option
 func (w *workerpool) UpdateLabelsWorkerPool(clusterNameOrID, workerPoolNameOrID, labels map[string]string, target ClusterTargetHeader) error {
 	requestBody := WorkerPoolPatchRequest{
-		State: "labels",
+		State:  "labels",
 		Labels: labels,
 	}
 	_, err := w.client.Patch(fmt.Sprintf("/v1/clusters/%s/workerpools/%s", clusterNameOrID, workerPoolNameOrID), requestBody, nil, target.ToMap())
