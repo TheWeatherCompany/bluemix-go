@@ -130,7 +130,7 @@ func (w *workerpool) ResizeWorkerPool(clusterNameOrID, workerPoolNameOrID string
 }
 
 // UpdateLabelsWorkerPool calls the API to resize a worker with the labels option
-func (w *workerpool) UpdateLabelsWorkerPool(clusterNameOrID, workerPoolNameOrID, labels map[string]string, target ClusterTargetHeader) error {
+func (w *workerpool) UpdateLabelsWorkerPool(clusterNameOrID, workerPoolNameOrID string, labels map[string]string, target ClusterTargetHeader) error {
 	requestBody := WorkerPoolPatchRequest{
 		State:  "labels",
 		Labels: labels,
